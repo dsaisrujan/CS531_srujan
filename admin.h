@@ -18,15 +18,19 @@ Purpose:            Admin options of the database. Able to
 
 void admin(MYSQL *conn)
 {
-    char table[1];
-    int pcc;
-    char pc[10];
-    printf("\nenter admin passcode:\n");
+    char table[1];                       //Holding answer for table
+    int pcc;                             //For turning password into int
+    char pc[10];                         //Holds password
+
+
+    //User must put in password before entering admin menu
+    printf("\nEnter admin passcode  (*hint what is 20 + 3?*):\n");
     fflush(stdin);
     fgets(pc, BUFF, stdin);
     pc[strcspn(pc, "\n")] = 0;
     pcc = atoi(pc);
-    
+
+    //If password matches, allowed in. (HERE IT IS 23)
     if(pcc == 23){
 	do{
         printf("\n\t------------------------- Admin Menu -------------------\n");
@@ -42,6 +46,11 @@ void admin(MYSQL *conn)
 		//Removing extra space from the buffer.
 		ans[strcspn(ans, "\n")] = 0;
 
+
+        //If ans == 1, we insert, ans == 2 is delete, and ans ==3 is displaying.
+        //Return with 4
+
+        //Inserting
 		switch(ans[0]){
 			case '1':
 				printf("\nInserting Product...");
@@ -49,6 +58,7 @@ void admin(MYSQL *conn)
 				fgets(table,BUFF,stdin);
 				table[strcspn(table,"\n")] = 0;
 
+                //Asking if row or table for later
 				if(table[0] == '1')
                 {
                     add_product(1, conn);
@@ -62,6 +72,7 @@ void admin(MYSQL *conn)
                     printf("Invalid entry");
                 }
 				break;
+            //Deleting
 			case '2':
 				printf("\nDeleting product...");
 				printf("\nPress 1 for table or 2 for row: ");
@@ -81,6 +92,8 @@ void admin(MYSQL *conn)
                     printf("Invalid entry");
                 }
 				break;
+
+            //Displaying
 			case '3':
 				printf("\nDisplaying data...");
 				printf("\nPress 1 for a list of categories (tables in DB)\nPress 2 for selecting a single category(table) only\nPress 3 for all products in the categories: ");
@@ -116,7 +129,7 @@ void admin(MYSQL *conn)
 }
 
 else{
-        printf("wrong admin passcode!!\n please contact owner for admin privilage\n");
+        printf("Wrong admin passcode!!\n Please contact owner for admin privilage\n");
         return;
     }
 }
