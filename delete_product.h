@@ -17,18 +17,20 @@ void delete_product(int select, MYSQL *conn)
 {
     int num_fields;                     //Number of fields in a sql query
     int row_count;                      //Counting in case of no rows on a table
-    int idd;
-    char table[25];
-    char id[25];
+    int idd;                            //Holding id of dropped record
+    char table[25];                     //Holds table name
+    char id[25];                        //Holds id character
     char ans[2];                        //double checking the user if they really want something deleted.
-    MYSQL_RES *result;
+    MYSQL_RES *result;                  //Holds result from query
 
-    MYSQL_ROW row;
+    MYSQL_ROW row;                      //Row for printing out query.
 
     //If one is selected, we delete a whole table
     if(select == 1)
     {
-        if(mysql_query(conn,"SHOW TABLES FROM kcochra7"))
+        snprintf(query, 1000, "SHOW TABLES FROM %s", dbname);
+
+        if(mysql_query(conn,query))
         {
             printf("\nError, no tables to show.");
             return;
@@ -82,12 +84,13 @@ void delete_product(int select, MYSQL *conn)
             printf("\nReturning...");
             return;
         }
-    }
+    } //end if select == 1
 
     //If two is selected, we delete a single row out of a table
     if(select == 2)
     {
-        if(mysql_query(conn,"SHOW TABLES FROM kcochra7"))
+        snprintf(query, 1000, "SHOW TABLES FROM %s", dbname);
+        if(mysql_query(conn,query))
         {
             printf("\nError, no tables to show.");
             return;
@@ -100,12 +103,12 @@ void delete_product(int select, MYSQL *conn)
         {
             for(int i =0; i< num_fields; i++)
             {
-                printf("%s",row[i]);
+                printf(" %s",row[i]);
             }
             printf("\n");
         }
         printf("\nFrom which category(table) do you want to delete from?");
-        printf("\ncategory: ");
+        printf("\nCategory: ");
 
         //Received table name, check if there are records to be deleted in the table
         fgets(table,BUFF,stdin);
@@ -151,7 +154,7 @@ void delete_product(int select, MYSQL *conn)
         {
             for(int i =0; i< num_fields; i++)
             {
-                printf("%s",row[i]);
+                printf(" %s",row[i]);
             }
             printf("\n");
         }
@@ -161,12 +164,17 @@ void delete_product(int select, MYSQL *conn)
         printf("\nID: ");
         fgets(id, BUFF, stdin);
         id[strcspn(id,"\n")] = 0;
+
+        //Sending idd to another int checke
         idd = atoi(id);
         printf("\n***Are you sure you want to delete ID: %d? This will permanently delete the record", idd);
         printf("\nPress Y to confirm: ");
         fgets(ans,BUFF,stdin);
         ans[strcspn(ans,"\n")] = 0;
         ans[0] = toupper(ans[0]);           //Changes answer to upper no matter what
+
+
+        //Deletes the id in the table
         if(ans[0] == 'Y')
         {
             printf("\nDeleting record %s", id);
@@ -189,7 +197,7 @@ void delete_product(int select, MYSQL *conn)
             return;
         }
 
-}
+} //end if select 2
 }
 #endif // DELETE_PRODUCT_H
 
