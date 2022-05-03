@@ -23,7 +23,8 @@ void customer(MYSQL *conn)
 	do{
 		printf("\n\t************************* Customer Menu *****************\n");
 		printf("\t|\t\t\t1) Select categories\t\t|\n");
-		printf("\t|\t\t\t2) Quit\t\t\t\t|\n");
+		printf("\t|\t\t\t2) My Shopping Cart\t\t|\n");
+		printf("\t|\t\t\t3) Quit\t\t\t\t|\n");
         printf("\t*********************************************************\n");
 		printf("Please enter your selection:  ");
 
@@ -33,8 +34,9 @@ void customer(MYSQL *conn)
 		ans[strcspn(ans, "\n")] = 0;
 
 		switch(ans[0]){
+		    //Select your option for what shop you want
 			case '1':
-				printf("\n select categories:");
+				printf("\n Select categories:");
 				snprintf(query, 1000,"SELECT `category_id`,`category_name` FROM `inventory`");
                 if(mysql_query(conn, query) !=0)
                 {
@@ -74,18 +76,22 @@ void customer(MYSQL *conn)
                 }
                 result2 = mysql_store_result(conn);
                 row = mysql_fetch_row(result2);
-                //strcpy(tb_name,row[0]);
-                display_customer(row[0],atoi(h),conn);
+                display_customer(row[0],atoi(h),conn, 1);
 				break;
+
+				//View shopping cart
 			case '2':
-				printf("\nGoing back to Main Menu...\n");
-				ans[0] = '3';                               //If I did ans = 4, I would break out of main menu.
+				printf("\nMy Shopping Cart...\n");
+                display_customer(&ans[0],0,conn, 2);
 				break;
+            case '3':
+                printf("\nReturning to previous menu\n");
+                ans[0] = '4';
 			default:
-				printf("Invalid entry\n");
+				printf("\nInvalid entry\n");
 		}
         }
-	while(ans[0]!= '3');
+	while(ans[0]!= '4');
 
 
 }
