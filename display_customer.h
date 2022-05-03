@@ -1,9 +1,10 @@
-
 /******************************************
 Name of Header:     display_customer.h
 Purpose:            Displays items in database to shop. Also
                     responsible for checking out, sorting and
-                    producing total of items.
+                    producing total of items. The shopping cart
+                    is also printed out to a file called receipts.
+
 
 *******************************************/
 
@@ -14,32 +15,36 @@ Purpose:            Displays items in database to shop. Also
 #include "mysql_connect.h"
 #include "add_product.h"
 
-static int uni_cat_cntr =0;                 //Counter for flags
-long int tot_prc =0;                        //Total price of all products
+static int uni_cat_cntr =0;                 //Counter for carts
+float tot_prc =0;                        //Total price of all products
 int ar[100];                                //Array items selected
 int row_count = 0;                          //Row count for printing
 int num_fields = 0;                         //Num of fields for printing query
-static int prod[100];                       //Product number
+static int prod[100];                       //Product number for shopping cart
 static char tbnames[100][100];              //Table name double array
 int tmprc=0;                                //Temporary product total
 
+float tax = .06;                             //Sales tax int
 
-void display_customer(char *tb_name,int k,MYSQL *conn)
+
+void display_customer(char *tb_name,int k,MYSQL *conn, int select)
 {
     /*if(elsflg == 1){
         uni_cat_cntr -=1;
     }*/
     FILE *fp;
     char table[1];
-    //ar[uni_cat_cntr]=k;
-    strcpy(tbnames[uni_cat_cntr],tb_name);
+
+
     MYSQL_ROW row,row2;
     MYSQL_RES *result,*result2;
     char h[1];
     char b[1];
-    /*printf("select which product do you want to add to cart:");
-    fgets(h,BUFF,stdin);
-    h[strcspn(h,"\n")] = 0;*/
+
+    if (select == 1)
+    {
+        strcpy(tbnames[uni_cat_cntr],tb_name);
+
         snprintf(query, 1000, "SELECT COUNT(*) as size FROM %s",tb_name);
         if(mysql_query(conn, query))
         {
@@ -88,9 +93,7 @@ do{
     printf("\nSort the product by Price low to high press 1");
     printf("\nSort the product by Price high to low press 2");
     printf("\nSort the product by Brand press 3");
-    printf("\nSort the product by Condition press 4");
-    printf("\nSort the product by ID press 5");
-    printf("\nBuy a product press 6");
+    printf("\nBuy a product press 4");
     printf("\nSelection: ");
     fgets(h,BUFF,stdin);
     h[strcspn(h,"\n")] = 0;
@@ -149,6 +152,8 @@ do{
                     }
                     printf("\t*************************************************\n");
     }
+    //Ommited out Condition and ID since customer doesn't usually care about that
+    /*
     if((h[0])=='4'){
         snprintf(query,1000,"SELECT * FROM %s ORDER BY %s.`Brand` ASC",tb_name,tb_name);
                     if(mysql_query(conn, query) !=0)
@@ -184,9 +189,9 @@ do{
                         printf("\t|\t%s) %s, %s, %s, %s\t\n",row[0],row[1],row[2],row[3],row[4]);
                     }
                     printf("\t*************************************************\n");
-    }
+    } */
 }
-while(h[0] != '6');
+while(h[0] != '4');
     printf("select which product do you want to add to cart:");
     fgets(h,BUFF,stdin);
     h[strcspn(h,"\n")] = 0;
@@ -223,22 +228,60 @@ while(h[0] != '6');
     result = mysql_store_result(conn);
     row = mysql_fetch_row(result);
     printf("\t|\t %s, %s, %s, %s\t\n",row[1],row[2],row[3],row[4]);
-    //printf("%s %s %s %s\n",row[1],row[2],row[3],row[4]);
 
         }
         printf("\t|-----------------------------------------------|\n");
-        printf("\t|your cart total price: $%ld\t\t\t|\n",tot_prc);
+        printf("\t|your cart total price + sales tax (6%) is : $%.2f\t\t\t|\n",tot_prc + (tot_prc *tax) );
 
-printf("\t*************************************************\n");
-printf("Do you want to add more to your cart (Y/N):");
-fgets(b,BUFF,stdin);
-b[strcspn(b,"\n")] = 0;
-if(towlower(b[0])=='y'){
+        printf("\t*************************************************\n");
+        printf("Do you want to add more to your cart (Y/N):");
+        fgets(b,BUFF,stdin);
+        b[strcspn(b,"\n")] = 0;
+        if(towlower(b[0])=='y'){
     return;
-}
+    }
+    select = 2;
+        }
+    }//End of IF === 1
 
+    //if select == 2 this is we show our shopping cart
+    //Responsible for printing out to a file and showing user
+    //The shopping cart.
+if(select == 2)
+{
+    printf("\n\t******************* Your Cart *******************\n");
+    printf("\t|\tName, Price, Brand, Item Condition\t| \n");
+    printf("\t|-----------------------------------------------|\n");
+
+    //For loop going though shopping cart
+    for(int l =0;l <uni_cat_cntr;l++){
+
+        //Query of selecting each id in the cart, and adding it to the query to print out
+        snprintf(query,1000,"SELECT * FROM %s WHERE `id` = %d",tbnames[l],prod[l]);
+        if(mysql_query(conn, query) !=0)
+        {
+            printf("Query failed  with the following message:\n");
+            printf("%s\n", mysql_error(conn));
+            exit(1);
+        }
+    result = mysql_store_result(conn);
+    row = mysql_fetch_row(result);
+    //print statement showing all items in cart
+    printf("\t|\t %s, %s, %s, %s\t\n",row[1],row[2],row[3],row[4]);
+        }
+        printf("\t|-----------------------------------------------|\n");
+        //If empty, we stop here. Can probably merge this around.
+        if(tot_prc == 0)
+        {
+            printf("\t|Your cart is empty!\t\t\t\t|\n");
+        }
+        else
+        {
+            printf("\t|your cart total price + sales tax (6%) is : $%.2f\t\t\t|\n",tot_prc + (tot_prc *tax) );
+        }
+printf("\t*************************************************\n");
 //Checking out shopping cart
-printf("you want to proceed to check out (Y/N):");
+printf("Do you want to check out (Y/N):");
     fgets(h,BUFF,stdin);
     h[strcspn(h,"\n")] = 0;
     if(towlower(h[0])=='y'){
@@ -254,6 +297,8 @@ printf("you want to proceed to check out (Y/N):");
         int id = mysql_insert_id(conn);
 
         //Opening file to put in reciepts
+        //This part of the code will go through our uni_cat_cntr and print it out as our
+        //Bill.
         fp = fopen("reciepts/reciept.txt","w+");
         fprintf(fp,"\n-----------------------BILL----------------------\n");
 
@@ -273,31 +318,39 @@ printf("you want to proceed to check out (Y/N):");
         //After receiving query, we print it out in the rows and give the total amount at the end.
         fprintf(fp,"%s %s %s %s\n",row[1],row[2],row[3],row[4]);
 
-        fprintf(fp,"\nyou paid: $%ld\n",tot_prc);
+
         fprintf(fp,"\n-------------------------------------------------\n");
         }
+        fprintf(fp,"\nYou paid + sales tax: $%.2f\n",tot_prc + (tot_prc * tax));
         fclose(fp);
 
+
+        //Resetting all counters for a fresh new cart.
         ar[uni_cat_cntr]=0;
         prod[uni_cat_cntr]=0;
         tbnames[uni_cat_cntr][0]='\0';
-        uni_cat_cntr-=1;
-        printf("\nyou paid: $%ld\n",tot_prc);
+        uni_cat_cntr = 0;
+        printf("\nyou paid: $%.2f\n",tot_prc + (tot_prc * tax));
         printf("ordered successfully");
+
+        //Putting total to 0
+        tot_prc = 0;
     }
+
     //If the user makes a mistake, can delete the last product in cart
+    //Program can only delete from last item in cart
     else{
         printf("do you want to delete the last product in the cart (Y/N):");
         fgets(h,BUFF,stdin);
         h[strcspn(h,"\n")] = 0;
         if(towlower(h[0])=='y'){
-        //elsflg=1;
+
         ar[uni_cat_cntr]=0;
         prod[uni_cat_cntr]=0;
         tbnames[uni_cat_cntr][0]='\0';
         uni_cat_cntr-=1;
 
-        //printf("tmprc = %d",tmprc);
+        //Minusing from total
         tot_prc -= tmprc;
 
         printf("\n\t******************* Your Cart *******************\n");
@@ -315,24 +368,19 @@ printf("you want to proceed to check out (Y/N):");
         }
     result = mysql_store_result(conn);
     row = mysql_fetch_row(result);
-    //printf("%s %s %s %s\n",row[1],row[2],row[3],row[4]);
+
     printf("\t|\t %s, %s, %s, %s\t\n",row[1],row[2],row[3],row[4]);
 
         }
         printf("\t|-----------------------------------------------|\n");
-        printf("\t|your cart total price: $%ld\t\t\t|\n",tot_prc);
+        printf("\t|your cart total price: $%2f\t\t\t|\n",tot_prc + (tot_prc * tax));
 
 printf("\t*************************************************\n");
     }
         return;
     }
 
-
-//return;
-}
-}
-
-
-
+  } //End IF == 2
+}// End main
 
 #endif // DISPLAY_CUSTOMER_H
