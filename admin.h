@@ -72,7 +72,7 @@ void admin(MYSQL *conn)
                     printf("Invalid entry");
                 }
 				break;
-            //Deleting
+            //Deleting. Sends 1 or two for row like above.
 			case '2':
 				printf("\nDeleting product...");
 				printf("\nPress 1 for table or 2 for row: ");
