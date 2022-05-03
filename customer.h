@@ -1,7 +1,7 @@
 /******************************************
 Name of Header:     customer.h
-Purpose:            Admin options of the database. Able to
-                    add entries and delete from the database.
+Purpose:            Menu for customers. Has two options to either leave
+                    or search for products.
 
 *******************************************/
 
@@ -15,16 +15,14 @@ Purpose:            Admin options of the database. Able to
 
 void customer(MYSQL *conn)
 {
-    char table[1];
-    MYSQL_ROW row;
-    MYSQL_RES *result,*result2;
-    char h[1];
-    char tb_name[50];
+    char table[1];                                  //Holding which table customer wants to view
+    MYSQL_ROW row;                                  //For query result printing of rows
+    MYSQL_RES *result,*result2;                     //Holding query results
+    char h[1];                                      //Holding what ID customer wants to buy
+    char tb_name[50];                               //Holding name of tables
 	do{
 		printf("\n\t************************* Customer Menu *****************\n");
 		printf("\t|\t\t\t1) Select categories\t\t|\n");
-		/*printf("2) Delete Product Info\n");
-		printf("3) Display the list of Products\n");*/
 		printf("\t|\t\t\t2) Quit\t\t\t\t|\n");
         printf("\t*********************************************************\n");
 		printf("Please enter your selection:  ");
