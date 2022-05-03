@@ -1,4 +1,20 @@
 # cs531final
 
-To use this project correctly, add your database info to mysql_connect.h. Also you may need to get specifically your libmysql.dll into your own project file. Easily find it in C:\Program Files\MySQL\MySQL\MySQL Server 8.0 \lib\libmysql.lib
-and create a folder named "reciepts" in your project folder as the printed txt file is stored in that folder.
+Made by: Kevin Cochran,Sai Srujan Dandyala,Hrithikendar Reddy Bathula,Anusha Bhavanam
+G Number : G01325780,G01350126,G01354518,G01348764
+
+Purpose: Using a database and adding to it with the c language. Customers can check out items in the database while admins can add
+		 delete or display the database.
+		 
+TIPS & TRICKS:
+First you must update mysql_connect.h with YOUR specific values. Database will not work without it.
+After that it does not matter. You can use a current database, or create a brand new one and link it to mysql_connect.h 
+
+
+
+
+Thoughts & Problems:
+C is a hard langauge to manipulate the database with. It's simple to do queries, however  the program becomes
+very long as you are just constantly throwing queries into a database and always checking if you can connect to it with conn 	
+other than that, very useful once the main frame is open. As users and admins adding to a database would rather see a menu screen
+than straight sql language. 
