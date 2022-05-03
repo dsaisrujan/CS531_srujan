@@ -10,6 +10,8 @@ TIPS & TRICKS:
 First you must update mysql_connect.h with YOUR specific values. Database will not work without it.
 After that it does not matter. You can use a current database, or create a brand new one and link it to mysql_connect.h 
 
+Also must make a file called reciepts otherwise it will not print correctly after shopping cart.
+
 
 
 
