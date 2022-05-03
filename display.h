@@ -15,22 +15,20 @@ Purpose:            Deletes a product table or row in a database.
 
 void display(int select, MYSQL *conn)
 {
-    int num_fields;                     //Number of fields in a sql query
-    int row_count;
-    int k = 0;
+    int num_fields = 0;                     //Number of fields in a sql query
+    int row_count;                          //Counts number of rows so we dont display null tables
+    int k = 0;                              //iterator
 
-    char table[25];
-    char *table_holder[200];
-    char id[25];
-    char ans[2];                        //double checking the user if they really want something deleted.
+    char table[25];                         //Name of table holder
+    char *table_holder[200];                //Holds pointers of names of tables
+    char id[25];                            //Holds id
+    char ans[2];                            //double checking the user if they really want something deleted.
 
-    MYSQL_RES *result;
-
-
-    MYSQL_ROW row;
+    MYSQL_RES *result;                      //MYSQL_RES query
+    MYSQL_ROW row;                          //MYSQL_ROW printer for row[i] manipulation
 
 
-
+    //If select ==1, we are only showing the tables in the database.
     if(select == 1)
     {
         snprintf(query, 1000, "SHOW TABLES FROM %s", dbname);
@@ -39,6 +37,7 @@ void display(int select, MYSQL *conn)
             printf("\nError, no tables to show.");
             return;
         }
+
         result = mysql_store_result(conn);
         num_fields = mysql_num_fields(result);
 
@@ -52,8 +51,10 @@ void display(int select, MYSQL *conn)
             printf("\n");
         }
         return;
-    }
+    } //end if select == 1
 
+
+    //If select 2, we are displaying a table of records.
     else if(select == 2)
     {
         snprintf(query, 1000, "SHOW TABLES FROM %s", dbname);
@@ -73,6 +74,8 @@ void display(int select, MYSQL *conn)
             }
             printf("\n");
         }
+
+        //Asks what table the user wants to see
         printf("\nWhat table did you want to view");
         printf("\nTable: ");
 
@@ -125,7 +128,7 @@ void display(int select, MYSQL *conn)
             printf("\n");
         }
 
-}
+} //end if select == 2
     //3rd option is displaying whole data base
     else if(select == 3)
     {
@@ -146,45 +149,45 @@ void display(int select, MYSQL *conn)
             for(int i =0; i< num_fields; i++)
             {
                 //Here  I assign table_holder array pointer to new row (which is the table names)
-                table_holder[k] = (char*) malloc(sizeof(char)*25);
-                memset(table_holder[k],0,25);
-                strcpy(table_holder[k],row[i]);
+                table_holder[k] = malloc(25);
+                table_holder[k] = row[i];
                 k++;
             }
         }
-        //Freeing result to see if this helps
-        mysql_free_result(result);
 
-        //Size of my table holder
-        int length = (sizeof(table_holder)/sizeof(table_holder[0]));
+        //mysql_free_result(result); is not good to use, it makes the result undefined
+        //for some reason. That is why earlier this display.h was not working properly.
 
-        //I realized that if I do length of table_holder, I will go all the way to
-        //a null value in my pointer string array. So I stop just when im about to reach
-        //The null value with length -1
-        for(int j = 0; j <length - 1; j++)
+
+
+        //Actually goes through an array of strings aka the table holders.
+        //They contain all table names, and I simply go through each name in the array
+        //And put it in a query and when I received the result, its just like earlier
+        //of printing each row in my result.
+        for(int i = 0; i < k; i++)
         {
-            //Adding query for each element in table_holder.
-            snprintf(query, 1000, "SELECT * FROM %s", table_holder[j]);
-            if(mysql_query(conn,query)){
-                printf("\nEnd of tables. Total items = %d", j);
+            //Redoes query, technically this error statement should never be reached since first query mysql_query checks the name
+            snprintf(query, 1000, "SELECT * FROM %s", table_holder[i]);
+            if(mysql_query(conn, query))
+            {
+                printf("\nError, unable to send query. Check table name.");
                 return;
             }
-
-            //Getting new result and fetching it for my row query
             result = mysql_store_result(conn);
             num_fields = mysql_num_fields(result);
-            printf("\n--------------Table %s---------------\n", table_holder[j]);
+            //Printing out current contents of Row
+            printf("\n---------------Row list in %s---------------\n",table_holder[i]);
             while((row = mysql_fetch_row(result)))
             {
-                //Printing out each record of the current table.
-                for(int i = 0; i < num_fields; i++)
+                for(int i =0; i< num_fields; i++)
                 {
-                    printf(" %s", row[i]);
+                    printf(" %s ",row[i]);
                 }
                 printf("\n");
             }
         }
-    }
+
+    } //end if select == 3
     return;
 }
 #endif // DISPLAY_H
