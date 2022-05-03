@@ -17,17 +17,17 @@ void add_product(int select, MYSQL *conn)
 {
     int check;                          //Checking if attribute length is appropriate
     int num_fields;                     //Number of fields in a sql query
-    int j = 0;
-    long int stk =0;                          //Used for iterating through enter_data[] for adding to a row
+    int j = 0;                          //Iterator
+    char stk[25];                       //Used for iterating through enter_data[] for adding to a row
 
-    char table[25];
-    char *enter_data[150];
-    char attr_num[2];
-    char *attr_name[150];
+    char table[25];                     //Table name holder
+    char *enter_data[150];              //Entering data about table
+    char attr_num[2];                   //How many attributes holder
+    char *attr_name[150];               //Attribute name entry
 
-    MYSQL_ROW row;
+    MYSQL_ROW row;                      //MYSQL_ROW command
 
-    //Adding tables
+    //Adding tables if select == 1
     if(select == 1)
     {
         printf("\nAdding a category(table)");
@@ -63,8 +63,8 @@ void add_product(int select, MYSQL *conn)
             attr_name[i][strcspn(attr_name[i],"\n")] = 0;
         }
         printf("please enter quantity of the %s to be added in stock:",table);
-        scanf(" %ld",&stk);
-        getchar();
+        fgets(stk,BUFF,stdin);
+        stk[strcspn(stk, "\n")] = 0;
         printf("\nThank you. %s will be made.", table);
 
         //If else statements based on user selecting the number of tables.
@@ -80,7 +80,7 @@ void add_product(int select, MYSQL *conn)
             //won't work.
             snprintf(query, 1000, "CREATE TABLE %s(id INT PRIMARY KEY AUTO_INCREMENT"
                                     " , Name VARCHAR(255), Price INT, Brand VARCHAR(255), `Condition` VARCHAR(255))",table);
-            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', '%ld')",table,stk);
+            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', %s)",table,stk);
 
         }
         else if(check == 1)
@@ -88,7 +88,7 @@ void add_product(int select, MYSQL *conn)
             snprintf(query, 1000, "CREATE TABLE %s(id INT PRIMARY KEY AUTO_INCREMENT"
                                 ",Name VARCHAR(255), Price INT, Brand VARCHAR(255), `Condition` VARCHAR(255),"
                                 "%s VARCHAR(255))",table, attr_name[0]);
-            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', '%ld')",table,stk);
+            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', %s)",table,stk);
         }
 
         else if(check == 2)
@@ -97,6 +97,7 @@ void add_product(int select, MYSQL *conn)
                            " AUTO_INCREMENT, Name VARCHAR(255), Price INT, Brand VARCHAR(255), `Condition` VARCHAR(255),"
                            " %s VARCHAR(255), %s VARCHAR(255))"
                            ,table, attr_name[0], attr_name[1]);
+            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', %s)",table,stk);
         }
         else if(check ==  3)
         {
@@ -104,6 +105,7 @@ void add_product(int select, MYSQL *conn)
                            " AUTO_INCREMENT, Name VARCHAR(255), Price INT, Brand VARCHAR(255), `Condition` VARCHAR(255),"
                            "Condition VARCHAR(255), %s VARCHAR(255), %s VARCHAR(255),"
                            "%s VARCHAR(255))", table, attr_name[0], attr_name[1], attr_name[2]);
+            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', %s)",table,stk);
         }
         else if(check == 4)
         {
@@ -112,6 +114,7 @@ void add_product(int select, MYSQL *conn)
                            "%s VARCHAR(255), %s VARCHAR(255)"
                            ", %s VARCHAR(255), %s VARCHAR(255))"
                            ,table, attr_name[0], attr_name[1], attr_name[2], attr_name[3]);
+            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', %s)",table,stk);
         }
         else if(check == 5)
         {
@@ -120,7 +123,7 @@ void add_product(int select, MYSQL *conn)
                            "%s VARCHAR(255), %s VARCHAR(255)"
                            ", %s VARCHAR(255), %s VARCHAR(255), %s VARCHAR(255))"
                            ,table, attr_name[0], attr_name[1], attr_name[2], attr_name[3], attr_name[4]);
-            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', '%ld')",table,stk);
+            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', %s)",table,stk);
         }
         else if(check == 6)
         {
@@ -129,7 +132,7 @@ void add_product(int select, MYSQL *conn)
                            "%s VARCHAR(255), %s VARCHAR(255),%s VARCHAR(255), %s VARCHAR(255),"
                            "%s VARCHAR(255), %s VARCHAR(255))"
                            ,table, attr_name[0], attr_name[1], attr_name[2], attr_name[3], attr_name[4], attr_name[5]);
-            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', '%ld')",table,stk);
+            snprintf(query2,1000,"INSERT INTO `inventory` (`category_id`, `category_name`, `instock`) VALUES (NULL, '%s', %s)",table,stk);
         }
         //Testing to make sure sql_query can go through. If not error is shown.
         if(mysql_query(conn, query)||mysql_query(conn,query2)){
@@ -238,6 +241,7 @@ void add_product(int select, MYSQL *conn)
             snprintf(query, 1000, "INSERT INTO %s VALUES(%s, '%s', %s,'%s')",table, enter_data[0],
                      enter_data[1], enter_data[2], enter_data[3]);
         }
+        // When j is greater than 5, we have more data to enter in, so we act accordingly.
         else if (j == 5)
         {
             snprintf(query, 1000, "INSERT INTO %s VALUES(%s, '%s', %s,'%s', '%s')",table,enter_data[0], enter_data[1],
@@ -248,7 +252,7 @@ void add_product(int select, MYSQL *conn)
             snprintf(query, 1000, "INSERT INTO %s VALUES(%s, '%s', %s,'%s', '%s', '%s')",
                      table,enter_data[0], enter_data[1], enter_data[2], enter_data[3], enter_data[4], enter_data[5]);
         }
-        //Putting 7 to account for the id int we automatically put in for creating a table
+
         else if(j == 7 )
         {
             snprintf(query, 1000, "INSERT INTO %s VALUES(%s, '%s', %s,'%s', '%s', '%s', '%s')",
