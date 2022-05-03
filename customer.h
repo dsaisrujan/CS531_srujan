@@ -21,12 +21,13 @@ void customer(MYSQL *conn)
     char h[1];
     char tb_name[50];
 	do{
-		printf("\n------------------------- Menu -------------------------\n");
-		printf("1) Select categories\n");
-		printf("2) Delete Product Info\n");
-		printf("3) Display the list of Products\n");
-		printf("4) Quit\n");
-		printf("\n\nPlease enter your selection:  ");
+		printf("\n\t************************* Customer Menu *****************\n");
+		printf("\t|\t\t\t1) Select categories\t\t|\n");
+		/*printf("2) Delete Product Info\n");
+		printf("3) Display the list of Products\n");*/
+		printf("\t|\t\t\t2) Quit\t\t\t\t|\n");
+        printf("\t*********************************************************\n");
+		printf("Please enter your selection:  ");
 
         //Taking in ans, fgets will ignore non int values.
 		fgets(ans, BUFF, stdin);
@@ -45,12 +46,13 @@ void customer(MYSQL *conn)
                 }
                 result = mysql_store_result(conn);
                 //printf("Number of rows: %ld\n", (long) mysql_num_rows(result));
-                printf("\n------------------------- Menu -------------------------\n");
+                printf("\n\t******************* Categories ************\n");
                 while((row = mysql_fetch_row(result)) != NULL){
-                    printf("%s) %s\n",row[0],row[1]);
+                    printf("\t|\t\t%s) %s\t\t\n",row[0],row[1]);
 
                 }
-                printf("select which category do you want to buy:");
+                printf("\t*******************************************\n");
+                printf("select ID of the category which you want to buy:");
                 fgets(h,BUFF,stdin);
                 h[strcspn(h,"\n")] = 0;
                 int flag =0;
@@ -76,39 +78,16 @@ void customer(MYSQL *conn)
                 row = mysql_fetch_row(result2);
                 //strcpy(tb_name,row[0]);
                 display_customer(row[0],atoi(h),conn);
-                /*snprintf(query2,1000,"SELECT * FROM %s",row[0]);
-                if(mysql_query(conn, query2) !=0)
-                {
-                    printf("Query failed  with the following message:\n");
-                    printf("%s\n", mysql_error(conn));
-                    exit(1);
-                }
-                result2 = mysql_store_result(conn);
-                printf("\n------------------------- Menu -------------------------\n");
-                while((row = mysql_fetch_row(result2)) != NULL){
-                    printf("%s) %s %s %s %s\n",row[0],row[1],row[2],row[3],row[4]);
-                }*/
-
-                //display_customer(tb_name,atoi(h),conn);
-
-                //display shopping cart
-
 				break;
 			case '2':
-				printf("\nDeleting product...");
-				break;
-			case '3':
-				printf("\nDisplaying list of products...");
-				break;
-			case '4':
 				printf("\nGoing back to Main Menu...\n");
-				ans[0] = '5';                               //If I did ans = 4, I would break out of main menu.
+				ans[0] = '3';                               //If I did ans = 4, I would break out of main menu.
 				break;
 			default:
 				printf("Invalid entry\n");
 		}
         }
-	while(ans[0]!= '5');
+	while(ans[0]!= '3');
 
 
 }

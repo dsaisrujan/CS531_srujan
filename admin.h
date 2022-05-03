@@ -29,12 +29,12 @@ void admin(MYSQL *conn)
     
     if(pcc == 23){
 	do{
-        printf("\t------------------------- Admin Menu -----------------------\n");
-		printf("\t|\t\t\t1) Insert Product Info\t\t|\n");
-		printf("\t|\t\t\t2) Delete Product Info\t\t|\n");
-		printf("\t|\t\t\t3) Display the list of Products\t|\n");
-		printf("\t|\t\t\t4) Quit\t\t\t\t|\n");
-        printf(" \t---------------------------------------------------------\n");
+        printf("\n\t------------------------- Admin Menu -------------------\n");
+		printf("\t|\t\t1) Insert Product Info\t\t\t|\n");
+		printf("\t|\t\t2) Delete Product Info\t\t\t|\n");
+		printf("\t|\t\t3) Display the list of Products\t\t|\n");
+		printf("\t|\t\t4) Quit\t\t\t\t\t|\n");
+        printf(" \t--------------------------------------------------------\n");
 		printf("Please enter your selection:  ");
 
         //Taking in ans, fgets will ignore non int values.
@@ -116,7 +116,7 @@ void admin(MYSQL *conn)
 }
 
 else{
-        printf("wrong admin passcode!!\n please contact owner for admin privilage");
+        printf("wrong admin passcode!!\n please contact owner for admin privilage\n");
         return;
     }
 }

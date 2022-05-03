@@ -139,15 +139,16 @@ void display(int select, MYSQL *conn)
         result = mysql_store_result(conn);
         num_fields = mysql_num_fields(result);
 
-        printf("\n--------------Full data list---------------***");
+        printf("\n--------------Full data list------------------");
         printf("\n----------------------------------------------\n");
         while((row = mysql_fetch_row(result)))
         {
             for(int i =0; i< num_fields; i++)
             {
                 //Here  I assign table_holder array pointer to new row (which is the table names)
-                table_holder[k] = malloc(25);
-                table_holder[k] = row[i];
+                table_holder[k] = (char*) malloc(sizeof(char)*25);
+                memset(table_holder[k],0,25);
+                strcpy(table_holder[k],row[i]);
                 k++;
             }
         }

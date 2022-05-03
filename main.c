@@ -28,7 +28,7 @@ int main ()
 {
     MYSQL *conn;                        //MYSQL connection variable
     conn = mysql_init(NULL);            //SQL initiation set to NULL
-    int p;
+    char p[1];
 
     //Checking if all things in mysql_connect.h is able to connect to a database.
     //Make sure you have the right information if not connecting when editing mysql_connect.h
@@ -37,12 +37,12 @@ int main ()
         printf("Make sure you have the right information in mysql_connect.h for this program to work.");
         exit(1);
     }
-    printf("Connection Successful to the database is Successful\n");
+    //printf("Connection Successful to the database is Successful\n");
 	do{
-		printf(" ------------------------- Menu -------------------------\n");
-		printf("|\t\t\t1) Login\t\t\t|\n");
-		printf("|\t\t\t2) Quit\t\t\t\t|\n");
-		printf(" --------------------------------------------------------\n");
+		printf("\t ------------------------- Menu -------------------------\n");
+		printf("\t|\t\t\t1) Login\t\t\t|\n");
+		printf("\t|\t\t\t2) Quit\t\t\t\t|\n");
+		printf("\t --------------------------------------------------------\n");
 		/*printf("3) My Shopping Cart\n");
 		printf("4) Customer\n");
 		printf("5) Quit\n");*/
@@ -55,16 +55,19 @@ int main ()
 
 		switch(ans[0]){
 			case '1':
-				printf("\n ------------------------- Login -----------------------\n");
-			    printf("|\t\t\t1) Admin\t\t\t|\n|\t\t\t2) Customer\t\t\t|\n");
-				printf(" -------------------------------------------------------\n");
+				printf("\n\t ------------------------- Login -----------------------\n");
+			    printf("\t|\t\t\t1) Admin\t\t\t|\n\t|\t\t\t2) Customer\t\t\t|\n");
+				printf("\t -------------------------------------------------------\n");
 				printf("please enter your choice:");
-			    scanf("%d",&p);
-			    if(p==1){
+				fflush(stdin);
+				fgets(p,BUFF,stdin);
+				p[strcspn(p, "\n")] = 0;
+				int pp = atoi(p);
+			    if(pp==1){
                   printf("\nGoing to Admin Menu...");
                   admin(conn);
 			    }
-			    else if(p==2){
+			    else if(pp==2){
                     printf("\nGoing to Customer Menu...");
                     customer(conn);
 			    }

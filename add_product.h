@@ -30,7 +30,7 @@ void add_product(int select, MYSQL *conn)
     //Adding tables
     if(select == 1)
     {
-        printf("\nAdding a table");
+        printf("\nAdding a category(table)");
         printf("\nName of category: ");
         fgets(table,BUFF,stdin);
         table[strcspn(table,"\n")] = 0;
@@ -63,7 +63,8 @@ void add_product(int select, MYSQL *conn)
             attr_name[i][strcspn(attr_name[i],"\n")] = 0;
         }
         printf("please enter quantity of the %s to be added in stock:",table);
-        scanf("%ld",&stk);
+        scanf(" %ld",&stk);
+        getchar();
         printf("\nThank you. %s will be made.", table);
 
         //If else statements based on user selecting the number of tables.
@@ -72,7 +73,7 @@ void add_product(int select, MYSQL *conn)
         //In our query variable then we can send it to mysql.
         //Primary key, Name, Price, Brand, and Condition will be automatically made.
 
-        printf("\nINSERTING THIS TABLE %s TO OUR DATABASE", table);
+        printf("\nINSERTING THIS CATEGORY(table) %s TO OUR DATABASE", table);
         if(check == 0)
         {
             //Funny thing about Condition, since it is mysql keyword, you need to put ` ` around the word otherwise
@@ -137,7 +138,7 @@ void add_product(int select, MYSQL *conn)
 
         else
         {
-            printf("\n\nTable made successfully!");
+            printf("\n\nCategory made successfully!");
         }
 
         return;
@@ -146,7 +147,7 @@ void add_product(int select, MYSQL *conn)
     //Adding rows
     if(select == 2)
     {
-        printf("\nName of table: ");
+        printf("\nName of category: ");
         fgets(table,BUFF,stdin);
         table[strcspn(table,"\n")] = 0;
 
@@ -178,7 +179,7 @@ void add_product(int select, MYSQL *conn)
         //ORDINAL_POSITION because it would put it in alphabetical order, not by inserted.
         snprintf(query, 1000, "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s'"
                  " ORDER BY ORDINAL_POSITION", table);
-        if(mysql_query(conn, query)||mysql_query(conn, query2)){
+        if(mysql_query(conn, query)){
             printf("Error, unable to find %s table. SQL Select from table error.", table);
         }
         result = mysql_store_result(conn);
@@ -198,7 +199,7 @@ void add_product(int select, MYSQL *conn)
             {
                  //Since Primary ID, Name, Price, Brand, and Condition are made automatically, we will
                  //Make enter them in first.
-                printf("\n\nOUR i = %d\n\n",i);
+                //printf("\n\nOUR i = %d\n\n",i);
                 //If j = 0, that is our Primary key. Record it as such for later.
                 if(j == 0)
                 {
@@ -210,91 +211,12 @@ void add_product(int select, MYSQL *conn)
                     j++;
                 }
 
-                //Commented out my if statments since it wasn't working correctly.
                 //User will have to enter in right information for now
 
-                /*
-                //If j = 1, that is our Name column.
-                if(j == 1)
-                {
-                    //Allocating data for pointer array
-                    enter_data[j] = malloc(25);
-                    printf("***>Please enter in %s of item:", row[i]);
-                    fgets(enter_data[j],BUFF,stdin);
-                    enter_data[j][strcspn(enter_data[j],"\n")] = 0;
-                    j++;
-                }
-                //If j = 2, that is our Price column.
-                if(j == 2)
-                {
-                    //Allocating data for pointer array
-                    enter_data[j] = malloc(25);
-                    printf("???Please enter in %s of item:", row[i]);
-                    fgets(enter_data[j],BUFF,stdin);
-                    enter_data[j][strcspn(enter_data[j],"\n")] = 0;
-                    check = atoi(enter_data[j]);
-                    //Prices can't be less than or equal to 0.
-                    if(check <= 0)
-                    {
-                        do
-                        {
-                            printf("\nWe aint selling anything for free! Please re-enter the item price:");
-                            fgets(enter_data[j],BUFF,stdin);
-                            enter_data[j][strcspn(enter_data[j],"\n")] = 0;
-                            check = atoi(enter_data[j]);
-                        }
-                        while(check <= 0);
-                    }
-                    j++;
-                }
-                //If j = 3, that is our Brand name
-                if(j == 3)
-                {
-                    //Allocating data for pointer array
-                    enter_data[j] = malloc(25);
-                    printf("!!!Please enter in %s of item:", row[i]);
-                    fgets(enter_data[j],BUFF,stdin);
-                    enter_data[j][strcspn(enter_data[j],"\n")] = 0;
-                    j++;
-                }
-                //If j = 4, that is our Condition.
-                if(j == 4)
-                {
-                    //Allocating data for pointer array
-                    enter_data[j] = malloc(25);
-                    printf("++++Please enter in %s of item:", row[i]);
-                    fgets(enter_data[j],BUFF,stdin);
-                    enter_data[j][strcspn(enter_data[j],"\n")] = 0;
-
-                    //Sends string to upper for comparison
-                    //Not working for me, maybe someone can solve this?
-                   for(char *p = enter_data[j]; *p; p++)
-                    {
-                        *p = toupper(*p);
-                    }
-                    if(enter_data[j] != "NEW" || enter_data[j] != "REFURBISHED" ||
-                        enter_data[j] != "USED" || enter_data[j] != "OPENED-BOX")
-                    {
-                        do
-                        {
-                            printf("\nCondition may only be New, Used, Refurbished, or Opened-box.");
-                            printf("\nPlease re-enter the condition: ");
-                            fgets(enter_data[j],BUFF,stdin);
-                            enter_data[j][strcspn(enter_data[j],"\n")] = 0;
-                            for(char *p = enter_data[j], *p, p++)
-                            {
-                                *p = toupper(*p);
-                            }
-                        }
-                        while(enter_data[j] != "NEW" || enter_data[j] != "REFURBISHED"||
-                        enter_data[j] != "USED" || enter_data[j] != "OPENED-BOX");
-                    }
-                    j++;
-                } */
                 else
                 {
                     enter_data[j] = malloc(25);
-                    printf("\nEnter the attribute of %s: ", row[i]);
+                    printf("\nEnter the product %s: ", row[i]);
                     fgets(enter_data[j],BUFF,stdin);
                     enter_data[j][strcspn(enter_data[j],"\n")] = 0;
                     j++;
@@ -305,7 +227,7 @@ void add_product(int select, MYSQL *conn)
             printf("\n");
 
         //ORDER OF INSERTION : Primary ID, Name, Price, Brand, Condition and attributes from users
-        printf("\nINSERTING ID: %s ROW INTO THIS TABLE %s ",enter_data[0],table);
+        printf("\nINSERTING ID: %s PRODUCT(row) INTO THIS CATEGORY(table) %s ",enter_data[0],table);
         if(j < 4 )
         {
             printf("ERROR: Table is incorrectly put in our database. Please delete and re-add the table in database. ");

@@ -47,8 +47,8 @@ void delete_product(int select, MYSQL *conn)
             }
             printf("\n");
         }
-        printf("\nWhat table did you want to delete?");
-        printf("\nTable: ");
+        printf("\nWhat category (table) do you want to delete?");
+        printf("\ncategory: ");
 
         fgets(table,BUFF,stdin);
         table[strcspn(table,"\n")] = 0;
@@ -62,9 +62,10 @@ void delete_product(int select, MYSQL *conn)
         if(ans[0] == 'Y')
         {
             //Sending drop query, if table is not there we display an error and leave.
-            printf("\nDeleting table %s", table);
+            printf("\nDeleting category %s", table);
             snprintf(query, 1000, "DROP TABLE %s", table);
-            if(mysql_query(conn, query))
+            snprintf(query2,1000,"DELETE FROM inventory WHERE `inventory`.`category_name` = %s",table);
+            if(mysql_query(conn, query)||mysql_query(conn,query2))
             {
                 printf("\nError, unable to send query. Check table name.");
                 return;
@@ -103,8 +104,8 @@ void delete_product(int select, MYSQL *conn)
             }
             printf("\n");
         }
-        printf("\nWhat table did you want to delete from?");
-        printf("\nTable: ");
+        printf("\nFrom which category(table) do you want to delete from?");
+        printf("\ncategory: ");
 
         //Received table name, check if there are records to be deleted in the table
         fgets(table,BUFF,stdin);
