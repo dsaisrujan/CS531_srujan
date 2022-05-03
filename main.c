@@ -14,6 +14,7 @@ Platform:       Windows
 Version:        1.0
 Sources:        CS531 Powerpoint slides
                 https://docs.oracle.com/en-us/iaas/mysql-database/index.html
+                https://www.mysqltutorial.org/
 
 
 *******************************************/
